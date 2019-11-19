@@ -28,33 +28,26 @@ from os import path
 class torch_policy_value_model(nn.Module):
     def __init__(self):
         super(torch_policy_value_model, self).__init__()
-        self.input_layer = nn.Linear(9,256)
-        self.hidden_layer = nn.Linear(256,512)
-        self.hidden_layer2 = nn.Linear(512,512)
-        self.hidden_layer3 = nn.Linear(512,512)
-        self.sigmoid = nn.Sigmoid()
-        self.value_hidden = nn.Linear(512,2048)
-        self.value_output = nn.Linear(2048,1)
-        self.policy_hidden = nn.Linear(512,2048)
-        self.policy_output = nn.Linear(2048,9)
+
+        # TODO
+        # create pytorch neural network
+        # input -> middle representation
+
+        # middle_rep -> policy_output
+
+        # middle_rep -> value output
+
+        # sigmoid for output of policy
+
 
     def forward(self,obs):
-        x = self.input_layer(obs)
-        x = torch.tanh(x)
-        x = self.hidden_layer(x)
-        x = torch.tanh(x)
-        x = self.hidden_layer2(x)
-        x = torch.tanh(x)
-        x = self.hidden_layer3(x)
-        x = torch.tanh(x)
+        
+        # TODO
+        # pytorch pythonic construction
+        # of that network 
 
-        policy  = self.policy_hidden(x)
-        policy  = self.policy_output(policy)
-        policy  = self.sigmoid(policy)
-
-        value = self.value_hidden(x)
-        value  = self.value_output(value)
-        value = torch.tanh(value)
+        # two returns,
+        # policy,value
 
         return policy,value
 
@@ -71,6 +64,8 @@ class model_wrapper():
             self.model = torch_policy_value_model()
         else:
             self.model = policy_value_model
+
+        # TODO
         learning_rate = 0.0001
 
         self.optimizer = optim.Adam(self.model.parameters(), lr=learning_rate)
@@ -95,39 +90,35 @@ class model_wrapper():
         return onehots
 
     def train(self, data):
+        # TODO
         # shuffle data before we do anything with it
-        np.random.shuffle(data)
-
 
 
         # data should be in state,action,new_state,reward
-        obs,actions,values = zip(*data)
 
         # reformat data 
         obs = torch.Tensor(obs).float()
         values = torch.Tensor(values).float().view((-1,1))
-
-        # feed these through the network
-        # cross entropy loss requires an index so we are taking the best
-        # action as our index
-        #actions = torch.Tensor(np.argmax(actions,axis=1)).long()
         actions = torch.Tensor(actions).float()
 
-
+        # epcohs param?
         epochs = 50
         for i in range(epochs):
             # Update the value network
             self.optimizer.zero_grad()
-
-            policy_prediction, value_prediction = self.model(obs)
-            v_loss = self.value_loss(value_prediction,values)
+            
+            # TODO
 
             # compute policy loss
-            p_loss = self.policy_loss(policy_prediction,actions)
+            
+            # compute value loss
+            
+            # combine losses
 
-            total_loss = v_loss+p_loss
-            total_loss.backward()
-            print("\rLoss:"+str(total_loss)+"                  ",end="")
+            # back up that loss
+
+            # output for the user
+            print("\rEpoch:",i,"Loss:"+str(total_loss)+"                  ",end="")
 
             self.optimizer.step()
             
